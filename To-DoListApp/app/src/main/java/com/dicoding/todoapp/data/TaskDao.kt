@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteQuery
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM tasks")
+    @RawQuery(observedEntities = [Task::class])
     fun getTasks(query: SupportSQLiteQuery): DataSource.Factory<Int, Task>
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
@@ -22,12 +22,12 @@ interface TaskDao {
     suspend fun insertTask(task: Task): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(vararg tasks: Task)
+    suspend fun insertAll(vararg tasks: Task)
 
     @Delete
     suspend fun deleteTask(task: Task)
 
     @Query("UPDATE tasks SET completed = :completed WHERE id = :taskId")
     suspend fun updateCompleted(taskId: Int, completed: Boolean)
-    
+
 }

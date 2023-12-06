@@ -44,7 +44,7 @@
         <ImageButton
             style="@style/Base.Widget.AppCompat.ImageButton"
             android:layout_width="50dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:contentDescription="@string/due_date"
             android:onClick="showDatePicker"
             android:src="@drawable/ic_date" />

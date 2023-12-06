@@ -21,7 +21,7 @@ class TaskAdapter(
 
     //TODO 8 : Create and initialize ViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_task, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.task_item, parent, false)
         return TaskViewHolder(view)
     }
 
@@ -32,11 +32,11 @@ class TaskAdapter(
 
         when {
             //TODO 10 : Display title based on status using TitleTextView
-            task.isCompleted -> {
+            task.completed -> {
                 //DONE
                 holder.tvTitle.setTaskTitle(TaskTitleView.TitleType.DONE)
             }
-            task.dueDateMillis < System.currentTimeMillis() -> {
+            task.dueDate < System.currentTimeMillis() -> {
                 //OVERDUE
                 holder.tvTitle.setTaskTitle(TaskTitleView.TitleType.OVERDUE)
             }
@@ -57,14 +57,14 @@ class TaskAdapter(
         fun bind(task: Task) {
             getTask = task
             tvTitle.text = task.title
-            tvDueDate.text = DateConverter.convertMillisToString(task.dueDateMillis)
+            tvDueDate.text = DateConverter.convertMillisToString(task.dueDate)
             itemView.setOnClickListener {
                 val detailIntent = Intent(itemView.context, DetailTaskActivity::class.java)
                 detailIntent.putExtra(TASK_ID, task.id)
                 itemView.context.startActivity(detailIntent)
             }
             cbComplete.setOnClickListener {
-                onCheckedChange(task, !task.isCompleted)
+                onCheckedChange(task, !task.completed)
             }
         }
 

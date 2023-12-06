@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
+import androidx.lifecycle.LiveData
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.dicoding.todoapp.R
@@ -16,6 +17,9 @@ import com.dicoding.todoapp.data.TaskRepository
 import com.dicoding.todoapp.ui.detail.DetailTaskActivity
 import com.dicoding.todoapp.utils.NOTIFICATION_CHANNEL_ID
 import com.dicoding.todoapp.utils.TASK_ID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NotificationWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
@@ -37,11 +41,16 @@ class NotificationWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, p
 
     override fun doWork(): Result {
         //TODO 14 : If notification preference on, get nearest active task from repository and show notification with pending intent
-        val repository = TaskRepository.getInstance(applicationContext)
-        val nearestActiveTask = repository.getNearestActiveTask()
 
-        if (nearestActiveTask != null && nearestActiveTask.isNotificationEnabled) {
-            showNotification(nearestActiveTask)
+        CoroutineScope(Dispatchers.Default).launch {
+            val repository = TaskRepository.getInstance(applicationContext, this)
+            val nearestActiveTaskLiveData = repository.getNearestActiveTask()
+
+            nearestActiveTaskLiveData.observeForever { nearestActiveTask ->
+                nearestActiveTask?.let {
+                    showNotification(nearestActiveTask)
+                }
+            }
         }
 
         return Result.success()
@@ -55,7 +64,7 @@ class NotificationWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, p
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelName!!,
-                applicationContext.getString(R.string.notification_channel_name),
+                applicationContext.getString(R.string.notify_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(channel)
@@ -66,7 +75,7 @@ class NotificationWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, p
             applicationContext,
             channelName!!
         )
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.ic_notifications)
             .setContentTitle(task.title)
             .setContentText(task.description)
             .setContentIntent(getPendingIntent(task))

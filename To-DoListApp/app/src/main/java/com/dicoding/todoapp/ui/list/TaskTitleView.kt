@@ -8,6 +8,12 @@ import androidx.core.content.ContextCompat
 import com.dicoding.todoapp.R
 
 class TaskTitleView : AppCompatTextView {
+    enum class TitleType {
+        NORMAL,
+        DONE,
+        OVERDUE
+    }
+
     private var mState = 0
 
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
@@ -40,9 +46,18 @@ class TaskTitleView : AppCompatTextView {
             mState = state
         }
 
+    fun setTaskTitle(type: TitleType) {
+        state = when (type) {
+            TitleType.NORMAL -> NORMAL
+            TitleType.DONE -> DONE
+            TitleType.OVERDUE -> OVERDUE
+        }
+    }
+
     companion object {
         const val NORMAL = 0
         const val DONE = 1
         const val OVERDUE = 2
     }
 }
+

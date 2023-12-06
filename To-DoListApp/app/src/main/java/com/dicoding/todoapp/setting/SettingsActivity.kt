@@ -52,7 +52,10 @@ class SettingsActivity : AppCompatActivity() {
                 findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
             prefNotification?.setOnPreferenceChangeListener { _, newValue ->
                 val channelName = getString(R.string.notify_channel_name)
-                val workManager = WorkManager.getInstance(this)
+                val workManager = WorkManager.getInstance(requireContext())
+
+                val NOTIFICATION_CHANNEL_ID = "notify-task"
+
                 //TODO 13 : Schedule and cancel daily reminder using WorkManager with data channelName
                 if (newValue as Boolean) {
                     // Schedule daily reminder

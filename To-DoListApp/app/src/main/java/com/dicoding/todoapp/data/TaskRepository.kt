@@ -6,6 +6,7 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.dicoding.todoapp.utils.FilterUtils
 import com.dicoding.todoapp.utils.TasksFilterType
+import kotlinx.coroutines.CoroutineScope
 
 class TaskRepository(private val tasksDao: TaskDao) {
 
@@ -16,15 +17,14 @@ class TaskRepository(private val tasksDao: TaskDao) {
         @Volatile
         private var instance: TaskRepository? = null
 
-        fun getInstance(context: Context): TaskRepository {
+        fun getInstance(context: Context, scope: CoroutineScope): TaskRepository {
             return instance ?: synchronized(this) {
                 if (instance == null) {
-                    val database = TaskDatabase.getInstance(context)
+                    val database = TaskDatabase.getInstance(context, scope)
                     instance = TaskRepository(database.taskDao())
                 }
                 return instance as TaskRepository
             }
-
         }
     }
 
@@ -45,7 +45,7 @@ class TaskRepository(private val tasksDao: TaskDao) {
         return tasksDao.getTaskById(taskId)
     }
 
-    fun getNearestActiveTask(): Task {
+    fun getNearestActiveTask(): LiveData<Task> {
         return tasksDao.getNearestActiveTask()
     }
 

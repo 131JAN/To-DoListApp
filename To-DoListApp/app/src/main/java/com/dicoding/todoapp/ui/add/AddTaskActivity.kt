@@ -1,24 +1,23 @@
 package com.dicoding.todoapp.ui.add
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.dicoding.todoapp.R
+import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.utils.DatePickerFragment
-import java.awt.Menu
-import java.awt.MenuItem
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListener {
-    private var dueDateMillis: Long = System.currentTimeMillis()
+    private var dueDate: Long = System.currentTimeMillis()
 
-    private val viewModel: AddTaskViewModel by viewModels {
-        ViewModelProvider.NewInstanceFactory().create(AddTaskViewModel::class.java)
-    }
+    private val viewModel: AddTaskViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,14 +45,14 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
 
     private fun saveTask() {
         // Retrieve task details from UI components
-        val title = findViewById<TextView>(R.id.add_et_title).text.toString()
-        val description = findViewById<TextView>(R.id.add_et_description).text.toString()
+        val title = findViewById<TextView>(R.id.add_ed_title).text.toString()
+        val description = findViewById<TextView>(R.id.add_ed_description).text.toString()
 
         // Create a new Task object
         val newTask = Task(
             title = title,
             description = description,
-            dueDateMillis = dueDateMillis
+            dueDate = dueDate
         )
 
         // Insert the new task into the database using the ViewModel
@@ -74,6 +73,6 @@ class AddTaskActivity : AppCompatActivity(), DatePickerFragment.DialogDateListen
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         findViewById<TextView>(R.id.add_tv_due_date).text = dateFormat.format(calendar.time)
 
-        dueDateMillis = calendar.timeInMillis
+        dueDate = calendar.timeInMillis
     }
 }

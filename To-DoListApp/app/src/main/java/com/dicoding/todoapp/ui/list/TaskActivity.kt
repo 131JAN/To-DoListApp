@@ -22,6 +22,7 @@ import com.dicoding.todoapp.utils.Event
 import com.dicoding.todoapp.utils.TasksFilterType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.MainScope
 
 class TaskActivity : AppCompatActivity() {
 
@@ -39,25 +40,27 @@ class TaskActivity : AppCompatActivity() {
             startActivity(addIntent)
         }
 
-        //TODO 6 : Initiate RecyclerView with LayoutManager
-        recycler = findViewById(R.id.recycler_tasks)
+        // TODO 6 : Initiate RecyclerView with LayoutManager
+        recycler = findViewById(R.id.rv_task)
         recycler.layoutManager = LinearLayoutManager(this)
-        taskAdapter = TaskAdapter()
+        taskAdapter = TaskAdapter { task, isChecked ->
+            taskViewModel.completeTask(task, isChecked)
+        }
         recycler.adapter = taskAdapter
 
         initAction()
 
-        val factory = ViewModelFactory.getInstance(this)
+        val factory = ViewModelFactory.getInstance(application, MainScope())
         taskViewModel = ViewModelProvider(this, factory).get(TaskViewModel::class.java)
 
         taskViewModel.tasks.observe(this, Observer(this::showRecyclerView))
         taskViewModel.snackbarText.observe(this, Observer(this::showSnackBar))
 
-        //TODO 15 : Fixing bug : snackBar not show when task completed
+        // TODO 15 : Fixing bug : snackBar not show when task completed
     }
 
-    private fun showRecyclerView(task: PagedList<Task>) {
-        //TODO 7 : Submit pagedList to adapter and update database when onCheckChange
+    private fun showRecyclerView(tasks: PagedList<Task>) {
+        // TODO 7 : Submit pagedList to adapter and update database when onCheckChange
         taskAdapter.submitList(tasks)
     }
 

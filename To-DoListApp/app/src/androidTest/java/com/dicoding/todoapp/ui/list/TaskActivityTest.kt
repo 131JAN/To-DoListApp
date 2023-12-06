@@ -41,7 +41,7 @@ class TaskActivityTest {
             .perform(ViewActions.click())
 
         // Check if the AddTaskActivity is displayed
-        Espresso.onView(ViewMatchers.withId(R.id.add_task_layout))
+        Espresso.onView(ViewMatchers.withId(R.id.coordinator_layout))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }

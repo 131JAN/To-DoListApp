@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dicoding.todoapp.data.TaskRepository
 import com.dicoding.todoapp.ui.detail.DetailTaskViewModel
 import com.dicoding.todoapp.ui.list.TaskViewModel
+import kotlinx.coroutines.CoroutineScope
 
 class ViewModelFactory private constructor(private val taskRepository: TaskRepository) :
     ViewModelProvider.Factory{
@@ -14,10 +15,10 @@ class ViewModelFactory private constructor(private val taskRepository: TaskRepos
         @Volatile
         private var instance: ViewModelFactory? = null
 
-        fun getInstance(context: Context): ViewModelFactory =
+        fun getInstance(context: Context, scope: CoroutineScope): ViewModelFactory =
             instance ?: synchronized(this) {
                 instance ?: ViewModelFactory(
-                    TaskRepository.getInstance(context)
+                    TaskRepository.getInstance(context, scope)
                 )
             }
     }

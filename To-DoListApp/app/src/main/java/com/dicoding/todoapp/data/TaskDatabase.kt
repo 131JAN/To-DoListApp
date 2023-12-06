@@ -26,7 +26,7 @@ abstract class TaskDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: TaskDatabase? = null
 
-        fun getInstance(context: Context): TaskDatabase {
+        fun getInstance(context: Context, scope: CoroutineScope): TaskDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
@@ -55,7 +55,7 @@ abstract class TaskDatabase : RoomDatabase() {
             }
         }
 
-        private fun fillWithStartingData(context: Context, dao: TaskDao) {
+        private suspend fun fillWithStartingData(context: Context, dao: TaskDao) {
             val task = loadJsonArray(context)
             try {
                 if (task != null) {
@@ -67,7 +67,7 @@ abstract class TaskDatabase : RoomDatabase() {
                                 item.getString("title"),
                                 item.getString("description"),
                                 item.getLong("dueDate"),
-                                item.getBoolean("completed").toInt()
+                                item.getBoolean("completed")
                             )
                         )
                     }
